@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import axios from "axios";
+import DeleteButton from "./delete";
 
 const App: React.FC = () => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [responseData, setResponseData] = useState<any>(null);
+  const [responseData, setResponseData] = useState<any>("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError(""); 
-
+    setError("");
+    setResponseData(null); // Reset response before new request
+  
     try {
       const response = await axios.post("https://bitespeedverifications.vercel.app/api/identify", {
-        email,
-        phoneNumber,
+        email: email.trim() !== "" ? email : null, // Send null if empty
+        phoneNumber: phoneNumber.trim() !== "" ? phoneNumber : null, // Send null if empty
       });
-
+  
       setResponseData(response.data);
-     alert("Go to https://bitespeedverifications.vercel.app/api/all-contacts to view all the current documents in database after this operation ")
+      alert("Go to https://bitespeedverifications.vercel.app/api/all-contacts to view all the current documents in the database after this operation ");
     } catch (err) {
       setError("Error sending data. Please try again.");
       console.error("Error:", err);
@@ -28,34 +30,32 @@ const App: React.FC = () => {
   return (
     <div style={styles.container}>
       <h2>Identity Resolution Form</h2>
+
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="email"
-          placeholder="Enter Email"
-          value={email}
+          placeholder="Enter Email (By default null)"
           onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
-          required
         />
         <input
           type="tel"
-          placeholder="Enter Phone Number"
-          value={phoneNumber}
+          placeholder="Enter Phone Number (By default null)"
           onChange={(e) => setPhoneNumber(e.target.value)}
           style={styles.input}
-          required
         />
         <button type="submit" style={styles.button}>Submit</button>
       </form>
-
+       
       {error && <p style={styles.error}>{error}</p>}
-
+      <DeleteButton/>
       {responseData && (
         <div style={styles.responseContainer}>
           <h3>Response:</h3>
           <pre style={styles.responseBox}>{JSON.stringify(responseData, null, 2)}</pre>
         </div>
       )}
+      
     </div>
   );
 };
@@ -73,6 +73,7 @@ const styles = {
     gap: "10px",
     maxWidth: "300px",
     margin: "auto",
+    justifyContent:"center"
   },
   input: {
     width: "100%",
