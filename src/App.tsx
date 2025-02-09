@@ -30,7 +30,11 @@ const App: React.FC = () => {
   return (
     <div style={styles.container}>
       <h2>Identity Resolution Form</h2>
-
+      <h3> Current State of Database : {` https://bitespeedverifications.vercel.app/api/all-contacts`}</h3>
+      <h5>
+        This form sends an email and/or phone number to an API endpoint. The API will return the identity of the provided email or phone number.
+        If no email or phone number is provided, the API will return null for that field.
+      </h5>
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="email"
